@@ -1,5 +1,5 @@
 {
-  "name": "EventDiscordBot",
+  "name": "ReaxTestBot",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -8,7 +8,9 @@
     "dev": "nodemon index.js"
   },
   "nodemonConfig": {
-    "ignore": ["lists.json"]
+    "ignore": [
+      "lists.json"
+    ]
   },
   "keywords": [],
   "author": "",
