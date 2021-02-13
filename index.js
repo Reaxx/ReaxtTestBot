@@ -9,15 +9,11 @@ var Request = require("request");
 
 // setInterval(function(){ Rand(0,2); }, 1000);
 
-const GeneratorLists = require("./generatorlists.js");
 
-const gLists = new GeneratorLists();
-gLists.Load();
-PrintToConsle("Loaded from JSON");
 
 Client.on('ready', () => {
     PrintToConsle("Logged in as " + Client.user.tag);
-    // SendNewMessegeToDiscord("SimultimaBot Lives!");
+    // SendNewMessegeToDiscord("ReaxTestBot Lives!");
     //Run bot
 })
 
@@ -41,114 +37,27 @@ Client.on('message', msg => {
         let command = parsedCommand[0];
         let parameters = parsedCommand[1];
         
-        let max, rspnContent, paramName, response;
-        let paramNames = [];
+        let max, rspnContent, response;
 
         switch (command) {     
-            case "tärning":              
-                max = parameters["d"] || 6;
-                let randNr = Rand(1,max);
-                rspnContent = "Rullade en d"+max+": \n";
-                rspnContent += randNr;
+            
+            //Creates a new textchannel
+            case "croom":
+                // name = parameters.name;
+
+                let options = new Object;
+                options.nsfw = parameters.nsfw || false;
+                options.type = parameters.type || "text";   
+                // options.parent = parameters.parent || null;  
+
+                msg.guild.createChannel(parameters.name, options).then(console.log).catch(console.error);
+    
+                rspnContent = "Creating channel " + parameters.name;
                 RespondToDiscord(msg, rspnContent);
                 break;
-
-            case "plats":
-                let place = gLists.GetRandom("Places");
-                console.log(place);
-
-                if(place === false) {
-                    rspnContent = "Inga träffar funna, prova att skapa några.";
-                } else {
-                    rspnContent = "Slumpvis vald plats: \n";
-                    rspnContent += place;
-                }
-
-                RespondToDiscord(msg, rspnContent);
-                break;
-
-            case "skapa":
-                //Asuming first param is relevant
-                paramNames = Object.keys(parameters);
-                paramName = paramNames[0];
-
-                switch (paramName) {
-                    case "plats":
-                        response = gLists.Add("Places",parameters[paramName]);  
-                        break;
-                
-                    default:
-                        rspnContent = paramName+" okänd.";
-                        RespondToDiscord(msg,rspnContent);
-                        return false;
-                }
-
-                //Creating response if a known param was used
-                if(response === true) {
-                    gLists.Save();
-                    rspnContent = "Objekt ''"+parameters[paramName]+"' i lista ''"+paramName+"' skapad";      
-                    msgContent = msg.author+" - " + rspnContent;              
-                    SendNewMessegeToDiscord(msgContent);
-                } else {
-                    rspnContent = response;
-                }
-                RespondToDiscord(msg,rspnContent);
-                break;
-                
-            case "radera":
-                //Asuming first param is relevant
-                paramNames = Object.keys(parameters);
-                paramName = paramNames[0];
-
-                switch (paramName) {
-                    case "plats":
-                        response = gLists.Remove("Places",parameters[paramName]);  
-                        break;
-                
-                    default:
-                        rspnContent = paramName+" okänd.";
-                        RespondToDiscord(msg,rspnContent);
-                        return false;
-                }
-
-                //Creating response if a known param was used
-                if(response === true) {
-                    gLists.Save();
-                    rspnContent = "Objekt ''"+parameters[paramName]+"' i lista ''"+paramName+"' raderat";      
-                    msgContent = msg.author+" - " + rspnContent;              
-                    SendNewMessegeToDiscord(msgContent);
-                } else {
-                    rspnContent = response;
-                }
-                RespondToDiscord(msg,rspnContent);
-                break;
-
-                case "lista":
-                    //Asuming first param is relevant
-                    paramNames = Object.keys(parameters);
-                    paramName = paramNames[0];
-    
-                    switch (paramName) {
-                        case "plats":
-                            response = gLists.List("Places",parameters[paramName]);  
-                            break;
-                    
-                        default:
-                            rspnContent = paramName+" okänd.";
-                            RespondToDiscord(msg,rspnContent);
-                            return false;
-                    }
-    
-                    RespondToDiscord(msg,response);
-                    break;
         
             default:
-                rspnContent = "Okänt kommandon.\nTillgänliga kommandon är: \n";
-                rspnContent += "Tärning [!d:100]\n";
-                rspnContent += "Plats\n";
-                rspnContent += "Skapa ![plats]:[platsbeskrivning]\n"
-                rspnContent += "Radera ![plats]:[platsbeskrivning]\n"
-                rspnContent += "Lista ![plats]"
+                rspnContent = "Okänt kommandon.\n";
                 RespondToDiscord(msg, rspnContent);
                 // PrintToConsle(UserHasRole(msg,"Admin"));
                 break;
@@ -158,12 +67,6 @@ Client.on('message', msg => {
 
 
 Client.login(process.env.BOT_TOKEN);
-
-function Rand(min,max) {
-    let rand =  Math.round(Math.random()*max) + min
-    console.log("Max: "+max+"\nMin: "+min+"\nResult: "+rand+"\n");
-    return rand;
-}
 
 /**
  * Parses a discord message into a easier format.
