@@ -50,29 +50,25 @@ Client.on('message', msg => {
             case "croom":
                 let parentCat;
                 
-                // name = parameters.name;
                 options.nsfw = parameters.nsfw || false;
                 options.type = parameters.type || "text"; 
+                options.parent = msg.guild.channels.find( c => c.name == parameters.category && c.type == "category" );
                 
-                //Check if category is set
-                if(parameters.category) {
-                    //Checks if category exists
-                    parentCat = msg.guild.channels.find( c => c.name == parameters.category && c.type == "category" ); 
-                    options.parent = parentCat 
+                //Check if room already exsists
+                room = msg.guild.channels.find( c => c.name == parameters.name && c.type == "text"  && c.parent.name == parameters.category ); 
+                if(room) {
+                    rspnContent = "Room already exists";
+                    RespondToDiscord(msg, rspnContent);
+                    return;
+                }
 
-                    //IF parent not found
-                    if(!parentCat) {
-                        rspnContent = ("Category " + parameters.category + " not found.");
-                        RespondToDiscord(msg, rspnContent);
-                        return;
-                    }
+                //Check if category is set but dosent exsist
+                if(parameters.category && !options.parent) {
+                    rspnContent = ("Category " + parameters.category + " not found.");
+                    RespondToDiscord(msg, rspnContent);
+                    return;
                 }
-                //Default category, should be fected from .env
-                else {
-                    parentCat = null;
-                }
-                
-                options.parent = parentCat 
+               
                 msg.guild.createChannel(parameters.name, options).then(console.log).catch(console.error);
     
                 console.log(options.parent);
