@@ -38,25 +38,57 @@ Client.on('message', msg => {
         let parameters = parsedCommand[1];
         
         let max, rspnContent, response;
+        let options = new Object;
+
+        // console.log(msg.guild.channels.find( c => c.name == "TEST" ));
+        // return;
+        
 
         switch (command) {     
             
             //Creates a new textchannel
             case "croom":
+                let parentCat;
+                
                 // name = parameters.name;
-
-                let options = new Object;
                 options.nsfw = parameters.nsfw || false;
-                options.type = parameters.type || "text";   
-                // options.parent = parameters.parent || null;  
+                options.type = parameters.type || "text"; 
+                
+                //Check if category is set
+                if(parameters.category) {
+                    //Checks if category exists
+                    parentCat = msg.guild.channels.find( c => c.name == parameters.category && c.type == "category" ); 
+                    options.parent = parentCat 
 
+                    //IF parent not found
+                    if(!parentCat) {
+                        rspnContent = ("Category " + parameters.category + " not found.");
+                        RespondToDiscord(msg, rspnContent);
+                        return;
+                    }
+                }
+                //Default category, should be fected from .env
+                else {
+                    parentCat = null;
+                }
+                
+                options.parent = parentCat 
                 msg.guild.createChannel(parameters.name, options).then(console.log).catch(console.error);
     
+                console.log(options.parent);
                 rspnContent = "Creating channel " + parameters.name;
                 RespondToDiscord(msg, rspnContent);
                 break;
+
+            case "ccat":
+                options.nsfw = parameters.nsfw || false;
+                options.type = "category";   
+                msg.guild.createChannel(parameters.name, options).then(console.log).catch(console.error);
+    
+            break;
         
             default:
+                PrintToConsle(command);
                 rspnContent = "Okänt kommandon.\n";
                 RespondToDiscord(msg, rspnContent);
                 // PrintToConsle(UserHasRole(msg,"Admin"));
