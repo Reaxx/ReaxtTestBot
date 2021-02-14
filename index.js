@@ -55,7 +55,15 @@ Client.on('message', msg => {
                 //Setts type to text, needs to be lowercase
                 parameters.type = "text"
 
-                let room = new Room(parameters);
+                try {
+                    let room = new Room(parameters);
+                  } catch (e) {
+                    console.error(e);
+                    rspnContent = "Room must be given a name";
+                    RespondToDiscord(msg,rspnContent);
+                    return;
+                  }
+                
                 
                 if(room.FindChannel(msg)) {
                     rspnContent = "Room already exists";

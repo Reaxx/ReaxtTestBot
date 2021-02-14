@@ -17,8 +17,6 @@ class Room {
         if(!this.channel) {
             this.channel = msg.guild.channels.find( c => c.name == this.name && c.type == this.type  && c.parent.name == this.parentname );
         }           
-        console.log(this.type);
-
 
         if(!this.channel) {     
             return false;
@@ -41,7 +39,7 @@ class Room {
     }
 
     Create(msg) {
-        msg.guild.createChannel(this.name,this).then(console.log).catch(console.error);
+        msg.guild.createChannel(this.name,this);
         return true;
     }
 
