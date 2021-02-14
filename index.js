@@ -73,32 +73,6 @@ Client.on('message', msg => {
                     rspnContent = "Creating channel " + parameters.name;
                     RespondToDiscord(msg, rspnContent);
                 }
-            
-
-                // options.nsfw = parameters.nsfw || false;
-                // options.type = parameters.type || "text"; 
-                // options.parent = msg.guild.channels.find( c => c.name == parameters.category && c.type == "category" );
-                
-                // //Check if room already exsists
-                // room = msg.guild.channels.find( c => c.name == parameters.name && c.type == "text"  && c.parent.name == parameters.category ); 
-                // if(room) {
-                //     rspnContent = "Room already exists";
-                //     RespondToDiscord(msg, rspnContent);
-                //     return;
-                // }
-
-                // //Check if category is set but dosent exsist
-                // if(parameters.category && !options.parent) {
-                //     rspnContent = ("Category " + parameters.category + " not found.");
-                //     RespondToDiscord(msg, rspnContent);
-                //     return;
-                // }
-               
-                // msg.guild.createChannel(parameters.name, options).then(console.log).catch(console.error);
-    
-                // console.log(options.parent);
-                // rspnContent = "Creating channel " + parameters.name;
-                // RespondToDiscord(msg, rspnContent);
                 break;
 
             case "ccat":
