@@ -8,14 +8,29 @@ class Room {
         this.type = params.type;
         this.nsfw = params.nsfw || false;
         this.type = params.type; 
-        this.parentname = params.category;
+        this.parentName = params.category;
+        
+        this.owner = null;
+        this.id = null;
     }
 
-
-    FindChannel(msg) {
+    /**
+     * Tries to find the room on the discordserver, if found loads the channel into this.channel
+     *
+     * @param Message msg
+     * @returns True if found, otherwise false.
+     * @memberof Room
+     */
+    FindChannel(guild) {
         //If Channel is not already set, tries to find it.
         if(!this.channel) {
-            this.channel = msg.guild.channels.find( c => c.name == this.name && c.type == this.type  && c.parent.name == this.parentname );
+            //If parentName is given, searches for that too.
+            if(this.parentName) {
+                this.channel = guild.channels.find( c => c.name == this.name && c.type == this.type  && c.parent.name == this.parentName );
+            }
+            else {
+                this.channel = guild.channels.find( c => c.name == this.name && c.type == this.type );
+            }
         }           
 
         if(!this.channel) {     
@@ -25,12 +40,12 @@ class Room {
         return true;
     }
 
-    FindParent(msg) {
+    FindParent(guild) {
          //If Parent is not already set, tries to find it.
         if(!this.parent) {
-            this.parent = msg.guild.channels.find( c => c.name == this.parentname && c.type == "category" );
+            this.parent = guild.channels.find( c => c.name == this.parentName && c.type == "category" );
         }           
-        
+
         if(!this.parent) {
             return false;
         }
@@ -38,16 +53,14 @@ class Room {
         return this.parent;
     }
 
-    Create(msg) {
-        msg.guild.createChannel(this.name,this);
+    Create(guild) {
+        guild.createChannel(this.name,this);
         return true;
     }
 
     toString() {
         return this.name;
     }
-
-
 }
 
 module.exports = Room;

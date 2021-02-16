@@ -54,41 +54,18 @@ Client.on('message', msg => {
                 
                 //Setts type to text, needs to be lowercase
                 parameters.type = "text"
+                parameters.typeFormated = "room";
 
-                try {
-                    let room = new Room(parameters);
-                  } catch (e) {
-                    console.error(e);
-                    rspnContent = "Room must be given a name";
-                    RespondToDiscord(msg,rspnContent);
-                    return;
-                  }
-                
-                
-                if(room.FindChannel(msg)) {
-                    rspnContent = "Room already exists";
-                    RespondToDiscord(msg, rspnContent);
-                    return;
-                }
-
-                if(!room.FindParent(msg)) {
-                    rspnContent = ("Category " + parameters.category + " not found.");
-                    RespondToDiscord(msg, rspnContent);
-                    return;
-                }
-
-                if(room.Create(msg)) {
-                    rspnContent = "Creating channel " + parameters.name;
-                    RespondToDiscord(msg, rspnContent);
-                }
+                CreateChannel(msg,parameters);
                 break;
 
             case "ccat":
-                options.nsfw = parameters.nsfw || false;
-                options.type = "category";   
-                msg.guild.createChannel(parameters.name, options).then(console.log).catch(console.error);
-    
-            break;
+                //Setts type to text, needs to be lowercase
+                parameters.type = "category";
+                parameters.typeFormated = "category";
+
+                CreateChannel(msg,parameters); 
+                break;
         
             default:
                 PrintToConsle(command);
@@ -163,5 +140,36 @@ function SendNewMessegeToDiscord(msgContent, channelName = process.env.DEFAULT_C
     }
     catch (error) {
         console.error(error);
+    }
+}
+
+function CreateChannel(msg,params) {
+    let room,typeFormated;
+    
+    try {
+        room = new Room(params);
+      } catch (e) {
+        console.error(e);
+        rspnContent = `The ${params.typeFormated} must have given a name`;
+        RespondToDiscord(msg,rspnContent);
+        return;
+      }
+    
+    
+    if(room.FindChannel(msg.guild)) {
+        rspnContent = `The ${params.typeFormated} already exists`;
+        RespondToDiscord(msg, rspnContent);
+        return;
+    }
+
+    if(params.category && !room.FindParent(msg.guild)) {
+        rspnContent = `Category ${params.category} not found.`;
+        RespondToDiscord(msg, rspnContent);
+        return;
+    }
+
+    if(room.Create(msg.guild)) {
+        rspnContent = `Creating ${params.typeFormated} ${params.name}`;
+        RespondToDiscord(msg, rspnContent);
     }
 }
